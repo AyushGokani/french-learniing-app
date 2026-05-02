@@ -20,12 +20,28 @@ lightweight progress tracking, and demo account storage.
 
 ## Account storage
 
-The deployed static app stores user accounts in IndexedDB, the browser's
-built-in database. Accounts are saved on the device/browser where they are
-created, with salted SHA-256 password hashes rather than plain-text passwords.
+The app now includes Vercel API routes for central user storage in Postgres.
+Set `DATABASE_URL` in Vercel to store users, sessions, progress, activity
+events, and test attempts in a shared database.
 
-For shared accounts across devices, add a server-backed database and API such as
-Supabase, Firebase, Neon, or Vercel Postgres.
+If `DATABASE_URL` is not configured, the frontend falls back to IndexedDB so the
+demo can still run locally in one browser.
+
+## Database setup
+
+1. Create a Postgres database with Vercel Postgres, Neon, Supabase, or another
+   hosted Postgres provider.
+2. Add the database connection string as `DATABASE_URL` in Vercel project
+   environment variables.
+3. Deploy the app. The API creates the required tables automatically on first
+   request. The schema is also available in `db/schema.sql`.
+
+The database tracks:
+
+- Users and salted password hashes
+- Login sessions
+- General activity/progress events
+- TEF, TCF, and DELF test attempts, responses, model answers, and strategies
 
 ## Run locally
 
@@ -46,6 +62,8 @@ Then visit `http://localhost:8000`.
 index.html   # Main app markup and account sections
 tests.html   # Dedicated TEF, TCF, and DELF test prep page
 styles.css   # Responsive visual design
+api/         # Vercel API routes for auth, progress, and test attempts
+db/schema.sql # Postgres database schema
 app.js       # Lessons, flashcards, quiz behavior, auth, and progress
 tests.js     # Test-page data, drill rendering, and interactions
 ```

@@ -188,6 +188,14 @@ async function persistActiveUserProgress() {
 
   state.activeUser.completedActivities = state.completedActivities;
   state.activeUser.updatedAt = new Date().toISOString();
+  if (window.BonjourApi?.isServerUser(state.activeUser)) {
+    await window.BonjourApi.saveProgress({
+      completedActivities: state.completedActivities,
+      activityType: "general_practice",
+    });
+    return;
+  }
+
   await saveUser(state.activeUser);
 }
 
@@ -247,7 +255,9 @@ function switchAuthPanel(panel) {
 
 async function renderProfile() {
   const storedUsers = await countUsers();
-  userCount.textContent = String(storedUsers);
+  userCount.textContent = window.BonjourApi?.isServerUser(state.activeUser)
+    ? "Server DB"
+    : String(storedUsers);
 
   if (!state.activeUser) {
     sessionBadge.textContent = "Guest mode";
@@ -264,7 +274,9 @@ async function renderProfile() {
   accountCta.textContent = "View account";
   profileTitle.textContent = `Bonjour, ${state.activeUser.name}`;
   profileCopy.textContent =
-    "Your learner profile and activity progress are saved in this browser database.";
+    window.BonjourApi?.isServerUser(state.activeUser)
+      ? "Your learner profile and activity progress are saved in the central database."
+      : "Your learner profile and activity progress are saved in this browser database.";
   profileEmail.textContent = state.activeUser.email;
   logoutButton.classList.remove("hidden");
 }
@@ -272,12 +284,22 @@ async function renderProfile() {
 async function setActiveUser(user) {
   state.activeUser = user;
   state.completedActivities = Number(user.completedActivities) || 0;
-  saveSession(user.email);
+  if (!window.BonjourApi?.isServerUser(user)) {
+    saveSession(user.email);
+  }
   updateProgress();
   await renderProfile();
 }
 
 async function restoreSession() {
+  if (window.BonjourApi) {
+    const serverSession = await window.BonjourApi.getCurrentUser();
+    if (serverSession.user) {
+      await setActiveUser(serverSession.user);
+      return;
+    }
+  }
+
   const sessionEmail = localStorage.getItem(SESSION_KEY);
 
   if (!sessionEmail) {
@@ -314,6 +336,22 @@ async function handleSignup(event) {
     return;
   }
 
+  if (window.BonjourApi) {
+    const serverSignup = await window.BonjourApi.signup({ name, email, password });
+    if (serverSignup.user) {
+      clearSession();
+      signupForm.reset();
+      await setActiveUser(serverSignup.user);
+      setAuthMessage("Account created in the central database. Bienvenue!", "success");
+      return;
+    }
+
+    if (!serverSignup.isUnavailable) {
+      setAuthMessage(serverSignup.error || "Account creation failed. Please try again.", "error");
+      return;
+    }
+  }
+
   const salt = createSalt();
   const user = {
     name,
@@ -336,6 +374,23 @@ async function handleLogin(event) {
   const formData = new FormData(loginForm);
   const email = normalizeEmail(formData.get("email"));
   const password = formData.get("password");
+
+  if (window.BonjourApi) {
+    const serverLogin = await window.BonjourApi.login({ email, password });
+    if (serverLogin.user) {
+      clearSession();
+      loginForm.reset();
+      await setActiveUser(serverLogin.user);
+      setAuthMessage("Logged in with the central database. Bon retour!", "success");
+      return;
+    }
+
+    if (!serverLogin.isUnavailable) {
+      setAuthMessage(serverLogin.error || "Login failed. Please try again.", "error");
+      return;
+    }
+  }
+
   const user = await getUser(email);
 
   if (!user) {
@@ -356,6 +411,9 @@ async function handleLogin(event) {
 
 async function handleLogout() {
   await persistActiveUserProgress();
+  if (window.BonjourApi?.isServerUser(state.activeUser)) {
+    await window.BonjourApi.logout();
+  }
   state.activeUser = null;
   state.completedActivities = Number(localStorage.getItem(GUEST_PROGRESS_KEY)) || 0;
   clearSession();

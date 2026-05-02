@@ -1,0 +1,25 @@
+{
+  "name": "workspace",
+  "version": "1.0.0",
+  "description": "A beginner-friendly French learning web app with guided lessons, vocabulary flashcards, quick quizzes, TEF/TCF/DELF exam practice, speech practice, and database-backed account storage.",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "npm run check",
+    "check": "node --check app.js && node --check tests.js && for file in api/**/*.js api/*js; do node --check \"$file\"; done"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AyushGokani/french-learniing-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AyushGokani/french-learniing-app/issues"
+  },
+  "homepage": "https://github.com/AyushGokani/french-learniing-app#readme",
+  "dependencies": {
+    "postgres": "^3.4.9"
+  }
+}

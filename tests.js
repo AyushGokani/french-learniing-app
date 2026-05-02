@@ -211,7 +211,7 @@ function updateStats() {
   completedCount.textContent = String(state.completedDrills);
   activeExam.textContent = state.currentExamKey;
   drillSkill.textContent = drill.skill;
-  if (state.activeUser) {
+  if (state.activeUser && !window.BonjourApi?.isServerUser(state.activeUser)) {
     state.activeUser.examCompletedDrills = state.completedDrills;
     saveUser(state.activeUser).catch(() => {
       setAuthMessage("Exam progress could not be saved right now.", "error");
@@ -237,12 +237,22 @@ async function setActiveUser(user) {
   state.activeUser = user;
   state.isLoggedIn = true;
   state.completedDrills = Number(user.examCompletedDrills) || 0;
-  localStorage.setItem(SESSION_KEY, user.email);
+  if (!window.BonjourApi?.isServerUser(user)) {
+    localStorage.setItem(SESSION_KEY, user.email);
+  }
   setAuthMessage("");
   renderDrill();
 }
 
 async function restoreSession() {
+  if (window.BonjourApi) {
+    const serverSession = await window.BonjourApi.getCurrentUser();
+    if (serverSession.user) {
+      await setActiveUser(serverSession.user);
+      return;
+    }
+  }
+
   const sessionEmail = localStorage.getItem(SESSION_KEY);
 
   if (!sessionEmail) {
@@ -270,6 +280,22 @@ async function handleSignup(event) {
   if (!name || !email || password.length < 6) {
     setAuthMessage("Please enter a name, email, and password of at least 6 characters.", "error");
     return;
+  }
+
+  if (window.BonjourApi) {
+    const serverSignup = await window.BonjourApi.signup({ name, email, password });
+    if (serverSignup.user) {
+      localStorage.removeItem(SESSION_KEY);
+      signupForm.reset();
+      await setActiveUser(serverSignup.user);
+      setAuthMessage("Account created in the central database. Test modules are unlocked.", "success");
+      return;
+    }
+
+    if (!serverSignup.isUnavailable) {
+      setAuthMessage(serverSignup.error || "Account creation failed. Please try again.", "error");
+      return;
+    }
   }
 
   const existingUser = await getUser(email);
@@ -301,6 +327,23 @@ async function handleLogin(event) {
   const formData = new FormData(loginForm);
   const email = normalizeEmail(formData.get("email"));
   const password = formData.get("password");
+
+  if (window.BonjourApi) {
+    const serverLogin = await window.BonjourApi.login({ email, password });
+    if (serverLogin.user) {
+      localStorage.removeItem(SESSION_KEY);
+      loginForm.reset();
+      await setActiveUser(serverLogin.user);
+      setAuthMessage("Logged in with the central database. Test modules are unlocked.", "success");
+      return;
+    }
+
+    if (!serverLogin.isUnavailable) {
+      setAuthMessage(serverLogin.error || "Login failed. Please try again.", "error");
+      return;
+    }
+  }
+
   const user = await getUser(email);
 
   if (!user) {
@@ -322,7 +365,11 @@ async function handleLogin(event) {
 async function handleLogout() {
   if (state.activeUser) {
     state.activeUser.examCompletedDrills = state.completedDrills;
-    await saveUser(state.activeUser);
+    if (window.BonjourApi?.isServerUser(state.activeUser)) {
+      await window.BonjourApi.logout();
+    } else {
+      await saveUser(state.activeUser);
+    }
   }
 
   state.activeUser = null;
@@ -413,7 +460,7 @@ function selectExam(examKey) {
   renderDrill();
 }
 
-function completeDrill() {
+async function completeDrill() {
   if (!state.isLoggedIn) {
     showLoginRequiredMessage();
     return;
@@ -431,6 +478,22 @@ function completeDrill() {
   if (!state.currentDrillCompleted) {
     state.completedDrills += 1;
     state.currentDrillCompleted = true;
+    if (window.BonjourApi?.isServerUser(state.activeUser)) {
+      const result = await window.BonjourApi.saveTestAttempt({
+        examCode: state.currentExamKey,
+        skill: drill.skill,
+        prompt: drill.prompt,
+        response,
+        modelAnswer: drill.answer,
+        strategy: drill.strategy,
+      });
+      if (result.user) {
+        state.activeUser = result.user;
+        state.completedDrills = Number(result.user.examCompletedDrills) || state.completedDrills;
+      } else if (!result.isUnavailable) {
+        setAuthMessage(result.error || "Test attempt could not be saved to the central database.", "error");
+      }
+    }
   }
   drillFeedback.innerHTML = `
     <strong>Model answer:</strong> ${drill.answer}<br>
