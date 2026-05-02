@@ -1,8 +1,8 @@
 # Bonjour Buddy
 
 A beginner-friendly French learning web app with guided lessons, vocabulary
-flashcards, quick quizzes, speech practice, lightweight progress tracking, and
-demo account storage.
+flashcards, quick quizzes, TEF/TCF/DELF exam practice, speech practice,
+lightweight progress tracking, and demo account storage.
 
 ## Features
 
@@ -10,6 +10,8 @@ demo account storage.
 - Flashcards for essential beginner vocabulary
 - Browser speech synthesis for French pronunciation practice
 - Multiple-choice quiz with instant feedback
+- TEF, TCF, and DELF exam prep cards with targeted skill drills
+- Writing, speaking, reading, listening, and language-structure practice prompts
 - Local progress tracking toward a daily activity goal
 - Login and sign-up forms for learner profiles
 - Browser database storage with IndexedDB for users and per-user progress

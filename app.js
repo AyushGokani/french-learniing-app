@@ -57,6 +57,76 @@ const quizQuestions = [
   },
 ];
 
+const examPractice = {
+  TEF: {
+    name: "TEF",
+    title: "Test d'Evaluation de Francais",
+    description: "Immigration, citizenship, work, and academic French practice.",
+    skills: ["Listening", "Reading", "Speaking", "Writing"],
+    drills: [
+      {
+        skill: "Listening",
+        prompt: "You hear: \"Le train pour Lyon partira avec dix minutes de retard.\" What changed?",
+        task: "Answer in English or French with the key information.",
+        answer: "The train to Lyon will leave ten minutes late.",
+        strategy: "Listen for time expressions, destination names, and delay words like retard.",
+      },
+      {
+        skill: "Writing",
+        prompt: "Should people learn French before moving to Canada?",
+        task: "Write 3-4 sentences with an opinion, reason, example, and conclusion.",
+        answer:
+          "Use opinion + reason + example + conclusion: A mon avis..., parce que..., par exemple..., donc...",
+        strategy: "TEF writing rewards structure, connectors, and clear everyday arguments.",
+      },
+    ],
+  },
+  TCF: {
+    name: "TCF",
+    title: "Test de connaissance du francais",
+    description: "Placement, immigration, and general language certification practice.",
+    skills: ["Listening", "Reading", "Language structures", "Speaking"],
+    drills: [
+      {
+        skill: "Reading",
+        prompt: "A notice says: \"Fermeture exceptionnelle ce lundi.\" What does it mean?",
+        task: "Explain the notice in one sentence.",
+        answer: "The place is exceptionally closed this Monday.",
+        strategy: "For TCF notices, identify the action first: opening, closing, delay, or cancellation.",
+      },
+      {
+        skill: "Language structures",
+        prompt: "Choose the correct sentence: \"Je vais ___ boulangerie.\"",
+        task: "Type the missing words and explain why.",
+        answer: "a la - Je vais a la boulangerie.",
+        strategy: "Review contractions and prepositions: a la, au, aux, de la, du, des.",
+      },
+    ],
+  },
+  DELF: {
+    name: "DELF",
+    title: "Diplome d'etudes en langue francaise",
+    description: "Official CEFR diploma practice from A1 to B2.",
+    skills: ["Listening", "Reading", "Writing", "Speaking"],
+    drills: [
+      {
+        skill: "Speaking",
+        prompt: "Introduce yourself for a DELF A2 speaking task: name, city, work/studies, hobbies.",
+        task: "Say or type a natural answer you could give to an examiner.",
+        answer: "Bonjour, je m'appelle..., j'habite a..., je travaille/etudie..., et j'aime...",
+        strategy: "Prepare reusable introductions, then adapt them naturally to the examiner's question.",
+      },
+      {
+        skill: "Writing",
+        prompt: "Write a short email inviting a friend to your birthday dinner.",
+        task: "Include greeting, invitation, date/time/place, one detail, and a closing.",
+        answer: "Bonjour..., je t'invite..., samedi a 19h..., chez moi..., a bientot.",
+        strategy: "DELF writing tasks often grade task completion as much as grammar.",
+      },
+    ],
+  },
+};
+
 const DB_NAME = "bonjourBuddyDb";
 const DB_VERSION = 1;
 const USER_STORE = "users";
@@ -70,6 +140,9 @@ const state = {
   currentCardIndex: 0,
   currentQuestionIndex: 0,
   currentQuestionAnswered: false,
+  currentExamKey: "TEF",
+  currentExamDrillIndex: 0,
+  currentExamAnswered: false,
 };
 
 const lessonGrid = document.querySelector("#lesson-grid");
@@ -86,6 +159,16 @@ const quizQuestion = document.querySelector("#quiz-question");
 const quizOptions = document.querySelector("#quiz-options");
 const quizFeedback = document.querySelector("#quiz-feedback");
 const nextQuestionButton = document.querySelector("#next-question-button");
+const examGrid = document.querySelector("#exam-grid");
+const examDrillTitle = document.querySelector("#exam-practice-title");
+const examDrillSkill = document.querySelector("#exam-skill-label");
+const examDrillPrompt = document.querySelector("#exam-practice-prompt");
+const examDrillTask = document.querySelector("#exam-task-text");
+const examSkillButtons = document.querySelector("#exam-skill-buttons");
+const examAnswer = document.querySelector("#exam-response");
+const checkExamButton = document.querySelector("#complete-exam-task");
+const nextExamButton = document.querySelector("#next-exam-task");
+const examFeedback = document.querySelector("#exam-feedback");
 const accountCta = document.querySelector("#account-cta");
 const sessionBadge = document.querySelector("#session-badge");
 const showLoginButton = document.querySelector("#show-login");
@@ -389,6 +472,70 @@ function renderQuizQuestion() {
   state.currentQuestionAnswered = false;
 }
 
+function getCurrentExamDrill() {
+  return examPractice[state.currentExamKey].drills[state.currentExamDrillIndex];
+}
+
+function renderExamCards() {
+  examGrid.innerHTML = Object.entries(examPractice)
+    .map(
+      ([examKey, exam]) => `
+        <article class="exam-card ${examKey === state.currentExamKey ? "active" : ""}">
+          <span class="card-label">${exam.name}</span>
+          <h3>${exam.title}</h3>
+          <p>${exam.description}</p>
+          <ul>
+            ${exam.skills.map((skill) => `<li>${skill}</li>`).join("")}
+          </ul>
+          <button class="button secondary exam-select" type="button" data-exam="${examKey}">
+            Practice ${exam.name}
+          </button>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderExamSkillButtons() {
+  const exam = examPractice[state.currentExamKey];
+
+  examSkillButtons.innerHTML = exam.drills
+    .map(
+      (drill, drillIndex) => `
+        <button
+          class="skill-button ${drillIndex === state.currentExamDrillIndex ? "active" : ""}"
+          type="button"
+          data-drill="${drillIndex}"
+        >
+          ${drill.skill}
+        </button>
+      `
+    )
+    .join("");
+}
+
+function renderExamDrill() {
+  const exam = examPractice[state.currentExamKey];
+  const drill = getCurrentExamDrill();
+  examDrillTitle.textContent = `${exam.name} practice`;
+  examDrillSkill.textContent = drill.skill;
+  examDrillPrompt.textContent = drill.prompt;
+  examDrillTask.textContent = drill.task;
+  examAnswer.value = "";
+  examFeedback.textContent = "";
+  examFeedback.className = "exam-feedback";
+  state.currentExamAnswered = false;
+  renderExamSkillButtons();
+}
+
+function selectExam(examKey) {
+  state.currentExamKey = examKey;
+  state.currentExamDrillIndex = 0;
+  renderExamCards();
+  renderExamDrill();
+  document.querySelector(".exam-practice-card").scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
 function speakCurrentCard() {
   if (!("speechSynthesis" in window)) {
     quizFeedback.textContent = "Speech is not supported in this browser yet.";
@@ -443,6 +590,43 @@ nextQuestionButton.addEventListener("click", () => {
   renderQuizQuestion();
 });
 
+examGrid.addEventListener("click", (event) => {
+  const button = event.target.closest(".exam-select");
+  if (!button) {
+    return;
+  }
+
+  selectExam(button.dataset.exam);
+});
+
+checkExamButton.addEventListener("click", () => {
+  const drill = getCurrentExamDrill();
+  const userResponse = examAnswer.value.trim();
+
+  if (userResponse.length < 10) {
+    examFeedback.textContent = "Write at least one full sentence before checking the model answer.";
+    examFeedback.className = "exam-feedback incorrect";
+    return;
+  }
+
+  examFeedback.innerHTML = `
+    <strong>Model answer:</strong> ${drill.answer}<br>
+    <strong>Strategy:</strong> ${drill.strategy}
+  `;
+  examFeedback.className = "exam-feedback correct";
+
+  if (!state.currentExamAnswered) {
+    addProgress();
+    state.currentExamAnswered = true;
+  }
+});
+
+nextExamButton.addEventListener("click", () => {
+  const drills = examPractice[state.currentExamKey].drills;
+  state.currentExamDrillIndex = (state.currentExamDrillIndex + 1) % drills.length;
+  renderExamDrill();
+});
+
 showLoginButton.addEventListener("click", () => switchAuthPanel("login"));
 
 showSignupButton.addEventListener("click", () => switchAuthPanel("signup"));
@@ -469,6 +653,8 @@ async function initializeApp() {
   renderLessons();
   renderFlashcard();
   renderQuizQuestion();
+  renderExamCards();
+  renderExamDrill();
   updateProgress();
 
   if (!("indexedDB" in window) || !("crypto" in window) || !crypto.subtle) {
