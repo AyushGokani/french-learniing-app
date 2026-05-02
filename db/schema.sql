@@ -26,6 +26,8 @@ CREATE TABLE IF NOT EXISTS test_attempts (
   skill TEXT NOT NULL,
   prompt TEXT NOT NULL,
   response TEXT NOT NULL,
+  audio_data TEXT,
+  level TEXT,
   model_answer TEXT NOT NULL,
   strategy TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()

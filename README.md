@@ -11,7 +11,9 @@ lightweight progress tracking, and demo account storage.
 - Browser speech synthesis for French pronunciation practice
 - Multiple-choice quiz with instant feedback
 - Dedicated TEF, TCF, and DELF tests page with login-gated exam modules
-- Section-by-section practice for official-style listening, reading, writing, speaking, and language-structure tasks
+- Level selection before starting exam modules
+- Separate section pages for official-style listening, reading, writing, speaking, and language-structure tasks
+- Audio playback for listening sections and browser audio recording for speaking responses
 - Local progress tracking toward a daily activity goal
 - Login and sign-up forms for learner profiles
 - Browser database storage with IndexedDB for users and per-user progress
@@ -61,9 +63,11 @@ Then visit `http://localhost:8000`.
 ```text
 index.html   # Main app markup and account sections
 tests.html   # Dedicated TEF, TCF, and DELF test prep page
+section.html # Single-section exam module page with audio and recording support
 styles.css   # Responsive visual design
 api/         # Vercel API routes for auth, progress, and test attempts
 db/schema.sql # Postgres database schema
 app.js       # Lessons, flashcards, quiz behavior, auth, and progress
 tests.js     # Test-page data, drill rendering, and interactions
+section.js   # Section-page rendering, audio playback, recording, and submission
 ```

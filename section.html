@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Test Section | Bonjour Buddy</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="tests-page">
+    <header class="section-test-hero">
+      <nav class="topbar" aria-label="Primary navigation">
+        <a class="brand" href="index.html" aria-label="Bonjour Buddy home">
+          <span class="brand-mark">BB</span>
+          Bonjour Buddy
+        </a>
+        <div class="nav-links">
+          <a href="tests.html">All tests</a>
+          <a href="index.html#account">Account</a>
+        </div>
+      </nav>
+
+      <section class="section-test-heading">
+        <p id="section-eyebrow" class="eyebrow">Section practice</p>
+        <h1 id="section-title">Loading section...</h1>
+        <p id="section-description" class="hero-copy">Choose a level and complete section tasks.</p>
+        <div id="section-meta" class="test-card-meta"></div>
+        <div class="level-picker">
+          <label for="section-level">Test level</label>
+          <select id="section-level">
+            <option value="A1">A1</option>
+            <option value="A2">A2</option>
+            <option value="B1">B1</option>
+            <option value="B2" selected>B2</option>
+            <option value="C1">C1</option>
+            <option value="C2">C2</option>
+          </select>
+        </div>
+      </section>
+    </header>
+
+    <main>
+      <section class="section section-test-layout">
+        <aside class="section-overview-card">
+          <span class="card-label">Module details</span>
+          <dl>
+            <div>
+              <dt>Exam</dt>
+              <dd id="section-exam">TEF</dd>
+            </div>
+            <div>
+              <dt>Section</dt>
+              <dd id="section-name">Comprehension orale</dd>
+            </div>
+            <div>
+              <dt>Format</dt>
+              <dd id="section-format">Audio comprehension</dd>
+            </div>
+            <div>
+              <dt>Duration</dt>
+              <dd id="section-duration">Timed</dd>
+            </div>
+          </dl>
+          <p id="section-instructions">Follow the section instructions before answering.</p>
+          <div id="section-module-list" class="test-skill-list"></div>
+          <a id="section-back-link" class="button secondary" href="tests.html">Back to test paths</a>
+        </aside>
+
+        <article class="section-task-card">
+          <div class="test-drill-header">
+            <div>
+              <span id="section-task-skill" class="status-pill">Task</span>
+              <h2 id="section-task-title">Task 1</h2>
+            </div>
+            <span id="section-task-counter" class="test-counter">1 / 1</span>
+          </div>
+
+          <div id="section-audio-panel" class="media-panel hidden">
+            <span class="card-label">Audio player</span>
+            <p id="section-audio-text">Audio text loading...</p>
+            <button id="section-play-audio" class="button primary" type="button">Play audio</button>
+          </div>
+
+          <div id="section-recorder-panel" class="media-panel hidden">
+            <span class="card-label">Speaking recorder</span>
+            <p>Record your answer, then submit it with your notes. This is one-way recording practice.</p>
+            <div class="exam-actions">
+              <button id="section-record" class="button primary" type="button">Start recording</button>
+              <button id="section-stop" class="button secondary" type="button" disabled>Stop recording</button>
+            </div>
+            <audio id="section-audio-playback" class="hidden" controls></audio>
+            <p id="section-recording-status" class="test-feedback" role="status"></p>
+          </div>
+
+          <div class="prompt-card">
+            <p id="section-task-prompt">Loading prompt...</p>
+            <p id="section-task-instructions">Loading task...</p>
+          </div>
+
+          <label class="response-label" for="section-response">
+            Your answer or notes
+            <textarea id="section-response" rows="8" placeholder="Write your response here."></textarea>
+          </label>
+
+          <div class="exam-actions">
+              <button id="section-answer-button" class="button primary" type="button">Submit task</button>
+            <button id="next-section-task" class="button secondary" type="button">Next task</button>
+          </div>
+          <p id="section-feedback" class="test-feedback" role="status"></p>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Practice each section like the real test.</p>
+    </footer>
+
+    <script src="api-client.js"></script>
+    <script src="tests.js"></script>
+    <script src="section.js"></script>
+  </body>
+</html>

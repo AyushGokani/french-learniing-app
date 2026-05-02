@@ -98,11 +98,14 @@ async function ensureSchema() {
       skill TEXT NOT NULL,
       prompt TEXT NOT NULL,
       response TEXT NOT NULL,
+      audio_data TEXT,
       model_answer TEXT NOT NULL,
       strategy TEXT NOT NULL,
       created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     )
   `;
+
+  await sql`ALTER TABLE test_attempts ADD COLUMN IF NOT EXISTS audio_data TEXT`;
 
   await sql`
     CREATE INDEX IF NOT EXISTS activity_events_user_id_created_at_idx

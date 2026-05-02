@@ -15,7 +15,17 @@ module.exports = async function handler(request, response) {
     }
 
     const sql = getDatabase();
-    const { examCode, skill, prompt, responseText, modelAnswer, strategy } = await readBody(request);
+    const {
+      audioData,
+      examCode,
+      level,
+      modelAnswer,
+      prompt,
+      responseText,
+      section,
+      skill,
+      strategy,
+    } = await readBody(request);
 
     if (!examCode || !skill || !prompt) {
       return json(response, 400, { error: "Exam, skill, and prompt are required." });
@@ -29,7 +39,10 @@ module.exports = async function handler(request, response) {
         prompt,
         response,
         model_answer,
-        strategy
+        strategy,
+        level,
+        section,
+        audio_data
       )
       VALUES (
         ${user.id},
@@ -38,7 +51,10 @@ module.exports = async function handler(request, response) {
         ${prompt},
         ${responseText || ""},
         ${modelAnswer || ""},
-        ${strategy || ""}
+        ${strategy || ""},
+        ${level || ""},
+        ${section || ""},
+        ${audioData || ""}
       )
     `;
 

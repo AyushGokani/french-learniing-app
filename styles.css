@@ -542,6 +542,25 @@ legend {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.level-picker {
+  display: grid;
+  max-width: 360px;
+  gap: 8px;
+  margin-top: 18px;
+  color: var(--slate-700);
+  font-weight: 900;
+}
+
+.level-picker select {
+  width: 100%;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  border-radius: 16px;
+  background: var(--white);
+  padding: 12px 14px;
+  color: var(--slate-900);
+  font: inherit;
+}
+
 .test-path-card,
 .test-workspace,
 .tests-score-card,
@@ -574,6 +593,11 @@ textarea:disabled {
 .strategy-grid ul {
   margin: 0;
   padding-left: 20px;
+}
+
+.test-path-card a {
+  color: var(--blue-700);
+  font-weight: 900;
 }
 
 .test-card-top {
@@ -728,6 +752,36 @@ textarea:disabled {
 .prompt-card p:first-child {
   color: var(--blue-900);
   font-size: 1.35rem;
+  font-weight: 900;
+}
+
+.section-page .test-workspace {
+  margin-top: -48px;
+}
+
+.section-page .test-drill-panel {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.audio-panel,
+.recording-panel {
+  display: grid;
+  gap: 12px;
+  margin: 18px 0;
+  border-radius: 24px;
+  background: var(--blue-100);
+  padding: 18px;
+}
+
+.audio-panel p,
+.recording-panel p {
+  margin-bottom: 0;
+}
+
+.recording-status {
+  min-height: 24px;
+  color: var(--slate-700);
   font-weight: 900;
 }
 

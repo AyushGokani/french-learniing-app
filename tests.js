@@ -15,12 +15,14 @@ const examPractice = {
         tasks: [
           {
             prompt: "You hear: \"Le train pour Lyon partira avec dix minutes de retard.\" What changed?",
+            audioText: "Le train pour Lyon partira avec dix minutes de retard.",
             task: "Answer with the key information from the announcement.",
             answer: "The train to Lyon will leave ten minutes late.",
             strategy: "Listen for time expressions, destination names, and delay words like retard.",
           },
           {
             prompt: "A voicemail says: \"Votre rendez-vous est confirme mardi a 14h30 au bureau 3.\"",
+            audioText: "Votre rendez-vous est confirme mardi a quatorze heures trente au bureau trois.",
             task: "Write the appointment day, time, and location.",
             answer: "The appointment is Tuesday at 14:30 in office 3.",
             strategy: "TEF audio often hides the answer in practical details: date, time, and place.",
@@ -109,12 +111,14 @@ const examPractice = {
         tasks: [
           {
             prompt: "You hear a voicemail asking you to call back before 18h.",
+            audioText: "Bonjour, merci de me rappeler avant dix-huit heures aujourd'hui.",
             task: "Write the action and deadline.",
             answer: "You need to call back before 6 p.m.",
             strategy: "TCF audio often tests action + time + person. Capture those three details.",
           },
           {
             prompt: "A speaker says the meeting is moved from room 204 to room 312.",
+            audioText: "La reunion ne sera pas en salle deux cent quatre. Elle est deplacee en salle trois cent douze.",
             task: "What information changed?",
             answer: "The meeting room changed from 204 to 312.",
             strategy: "Listen for correction markers such as finalement, plutot, or changement.",
@@ -202,12 +206,14 @@ const examPractice = {
         tasks: [
           {
             prompt: "You hear a museum announcement: entry is free for students on Wednesday.",
+            audioText: "L'entree du musee est gratuite pour les etudiants mercredi.",
             task: "Identify who gets free entry and when.",
             answer: "Students get free entry on Wednesday.",
             strategy: "DELF listening often asks for public, place, price, time, or reason.",
           },
           {
             prompt: "A friend says she cannot come because she has a doctor's appointment.",
+            audioText: "Je suis desolee, je ne peux pas venir parce que j'ai rendez-vous chez le medecin.",
             task: "Explain why she cannot come.",
             answer: "She cannot come because she has a doctor's appointment.",
             strategy: "For lower DELF levels, focus on direct reasons introduced by parce que.",
@@ -281,6 +287,8 @@ const examPractice = {
   },
 };
 
+window.BONJOUR_EXAM_PRACTICE = examPractice;
+
 const DB_NAME = "bonjourBuddyDb";
 const DB_VERSION = 1;
 const USER_STORE = "users";
@@ -292,12 +300,14 @@ const state = {
   currentExamKey: "TEF",
   currentModuleIndex: 0,
   currentTaskIndex: 0,
+  selectedLevel: "B2",
   completedTasks: 0,
   currentTaskCompleted: false,
   isLoggedIn: false,
 };
 
 const examGrid = document.querySelector("#test-path-grid");
+const levelSelect = document.querySelector("#test-level");
 const skillButtons = document.querySelector("#test-skill-list");
 const accessTitle = document.querySelector("#test-access-title");
 const accessCopy = document.querySelector("#test-access-copy");
@@ -589,7 +599,17 @@ function renderExamCards() {
             <span>${exam.modules.length} sections</span>
           </div>
           <ul>
-            ${exam.modules.map((module) => `<li>${module.title}</li>`).join("")}
+            ${exam.modules
+              .map(
+                (module, moduleIndex) => `
+                  <li>
+                    <a href="section.html?exam=${examKey}&module=${moduleIndex}&level=${state.selectedLevel}">
+                      ${module.title}
+                    </a>
+                  </li>
+                `
+              )
+              .join("")}
           </ul>
           <button
             class="button ${examKey === state.currentExamKey ? "primary" : "secondary"} test-select"
@@ -749,23 +769,29 @@ skillButtons.addEventListener("click", (event) => {
   renderDrill();
 });
 
-checkButton.addEventListener("click", completeDrill);
-nextButton.addEventListener("click", showNextDrill);
-loginForm.addEventListener("submit", (event) => {
-  handleLogin(event).catch(() => {
-    setAuthMessage("Login failed. Please try again.", "error");
+if (examGrid) {
+  checkButton.addEventListener("click", completeDrill);
+  nextButton.addEventListener("click", showNextDrill);
+  levelSelect.addEventListener("change", () => {
+    state.selectedLevel = levelSelect.value;
+    renderExamCards();
   });
-});
-signupForm.addEventListener("submit", (event) => {
-  handleSignup(event).catch(() => {
-    setAuthMessage("Account creation failed. Please try again.", "error");
+  loginForm.addEventListener("submit", (event) => {
+    handleLogin(event).catch(() => {
+      setAuthMessage("Login failed. Please try again.", "error");
+    });
   });
-});
-logoutButton.addEventListener("click", () => {
-  handleLogout().catch(() => {
-    setAuthMessage("Logout failed. Please try again.", "error");
+  signupForm.addEventListener("submit", (event) => {
+    handleSignup(event).catch(() => {
+      setAuthMessage("Account creation failed. Please try again.", "error");
+    });
   });
-});
+  logoutButton.addEventListener("click", () => {
+    handleLogout().catch(() => {
+      setAuthMessage("Logout failed. Please try again.", "error");
+    });
+  });
+}
 
 async function initializeTestsPage() {
   renderDrill();
@@ -783,4 +809,6 @@ async function initializeTestsPage() {
   }
 }
 
-initializeTestsPage();
+if (examGrid) {
+  initializeTestsPage();
+}
