@@ -157,6 +157,36 @@
             <button id="complete-topic-button" class="button primary" type="button">Mark topic practiced</button>
           </article>
 
+          <article class="hub-card practice-tool-card">
+            <span class="card-label">Word to sentence</span>
+            <h3>Generate useful French sentences</h3>
+            <label for="sentence-word">
+              Enter a French word
+              <input id="sentence-word" type="text" placeholder="Example: voyage">
+            </label>
+            <button id="generate-sentence-button" class="button primary" type="button">Generate sentence</button>
+            <div id="sentence-output" class="tool-output" aria-live="polite"></div>
+          </article>
+
+          <article class="hub-card practice-tool-card">
+            <span class="card-label">Quiz generator</span>
+            <h3>Create quick MCQs</h3>
+            <p>Generate a multiple-choice vocabulary question from your practice words.</p>
+            <button id="generate-quiz-button" class="button primary" type="button">Generate quiz</button>
+            <div id="generated-quiz" class="tool-output" aria-live="polite"></div>
+          </article>
+
+          <article class="hub-card practice-tool-card">
+            <span class="card-label">Pronunciation feedback</span>
+            <h3>Speak and compare</h3>
+            <p id="pronunciation-target">Bonjour</p>
+            <div class="exam-actions">
+              <button id="new-pronunciation-button" class="button secondary" type="button">New phrase</button>
+              <button id="start-pronunciation-button" class="button primary" type="button">Start speaking</button>
+            </div>
+            <p id="pronunciation-feedback" class="hub-status" role="status"></p>
+          </article>
+
           <article class="hub-card">
             <span class="card-label">My notes</span>
             <h3>Save phrases to review</h3>

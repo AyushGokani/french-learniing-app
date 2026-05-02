@@ -939,11 +939,54 @@ textarea:disabled {
   color: var(--blue-900);
 }
 
+.tool-card {
+  display: grid;
+  gap: 14px;
+}
+
+.tool-output,
+.generated-output,
+.quiz-tool-options {
+  display: grid;
+  gap: 10px;
+  border-radius: 22px;
+  background: var(--slate-100);
+  padding: 16px;
+}
+
+.tool-output strong,
+.generated-output strong {
+  color: var(--blue-900);
+}
+
+.quiz-tool-options label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 16px;
+  background: var(--white);
+  padding: 10px 12px;
+}
+
+.pronunciation-target {
+  color: var(--blue-900);
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
 .hub-status {
   min-height: 26px;
   margin: 14px 0 0;
   color: var(--green-600);
   font-weight: 900;
+}
+
+.hub-status.error {
+  color: var(--red-600);
+}
+
+.hub-status.success {
+  color: var(--green-600);
 }
 
 .study-plan-list {

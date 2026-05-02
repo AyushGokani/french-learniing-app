@@ -91,6 +91,36 @@ const studyPlan = [
   "Practice one test section or topic prompt.",
 ];
 
+const sentenceTemplates = [
+  "J'utilise {word} quand je parle avec mes amis.",
+  "Aujourd'hui, je veux pratiquer le mot {word}.",
+  "Dans une phrase simple, {word} peut m'aider a communiquer.",
+  "Je vais repeter {word} pour ameliorer mon francais.",
+];
+
+const generatedQuizBank = [
+  {
+    question: "Which French phrase means \"I would like\"?",
+    answer: "Je voudrais",
+    options: ["Je voudrais", "Je suis", "J'ai besoin", "Je vais"],
+  },
+  {
+    question: "Which word means \"water\"?",
+    answer: "Eau",
+    options: ["Pain", "Eau", "Fromage", "Lait"],
+  },
+  {
+    question: "Which phrase is best for a polite request?",
+    answer: "S'il vous plaît",
+    options: ["Salut", "S'il vous plaît", "A demain", "Tres vite"],
+  },
+  {
+    question: "Which connector means \"because\"?",
+    answer: "Parce que",
+    options: ["Donc", "Mais", "Parce que", "Cependant"],
+  },
+];
+
 const DB_NAME = "bonjourBuddyDb";
 const DB_VERSION = 1;
 const USER_STORE = "users";
@@ -145,6 +175,15 @@ const studyNotes = document.querySelector("#study-notes");
 const saveNotesButton = document.querySelector("#save-notes-button");
 const notesStatus = document.querySelector("#notes-status");
 const studyPlanList = document.querySelector("#study-plan-list");
+const sentenceWord = document.querySelector("#sentence-word");
+const generateSentenceButton = document.querySelector("#generate-sentence-button");
+const sentenceOutput = document.querySelector("#sentence-output");
+const generateQuizButton = document.querySelector("#generate-quiz-button");
+const generatedQuiz = document.querySelector("#generated-quiz");
+const pronunciationTarget = document.querySelector("#pronunciation-target");
+const newPronunciationButton = document.querySelector("#new-pronunciation-button");
+const startPronunciationButton = document.querySelector("#start-pronunciation-button");
+const pronunciationFeedback = document.querySelector("#pronunciation-feedback");
 
 function normalizeEmail(email) {
   return email.trim().toLowerCase();
@@ -373,6 +412,120 @@ function saveDailyGoal() {
 
   localStorage.setItem(getLearnerStorageKey("dailyGoal"), dailyGoalSelect.value);
   dailyGoalMessage.textContent = `Today's goal: ${dailyGoalSelect.value} minutes of focused French.`;
+}
+
+function generateSentenceFromWord() {
+  if (!state.activeUser) {
+    sentenceOutput.textContent = "Log in to use the sentence generator.";
+    return;
+  }
+
+  const word = sentenceWord.value.trim() || "voyage";
+  const templates = [
+    `J'utilise le mot "${word}" dans une phrase simple.`,
+    `Aujourd'hui, je pratique "${word}" pour parler plus naturellement en francais.`,
+    `Peux-tu expliquer "${word}" avec un exemple de la vie quotidienne ?`,
+  ];
+  const sentence = templates[Math.floor(Math.random() * templates.length)];
+  sentenceOutput.innerHTML = `<strong>Generated sentence:</strong><br>${sentence}`;
+}
+
+function generateMiniQuiz() {
+  if (!state.activeUser) {
+    generatedQuiz.textContent = "Log in to generate MCQ practice.";
+    return;
+  }
+
+  const question = generatedQuizBank[Math.floor(Math.random() * generatedQuizBank.length)];
+  generatedQuiz.innerHTML = `
+    <p><strong>${question.prompt}</strong></p>
+    <div class="quiz-options generated-options">
+      ${question.options
+        .map(
+          (option) => `
+            <label class="quiz-option">
+              <input type="radio" name="generated-quiz-answer" value="${option}">
+              <span>${option}</span>
+            </label>
+          `
+        )
+        .join("")}
+    </div>
+    <p class="hub-status">Choose an answer to check it instantly.</p>
+  `;
+}
+
+function checkGeneratedQuiz(event) {
+  const selected = event.target.closest('input[name="generated-quiz-answer"]');
+  if (!selected) {
+    return;
+  }
+
+  const currentQuestion = generatedQuizBank.find((question) =>
+    question.options.includes(selected.value)
+  );
+  const status = generatedQuiz.querySelector(".hub-status");
+
+  if (selected.value === currentQuestion.answer) {
+    status.textContent = "Correct! Great vocabulary recall.";
+    status.className = "hub-status success";
+    addProgress();
+    return;
+  }
+
+  status.textContent = `Not quite. Correct answer: ${currentQuestion.answer}.`;
+  status.className = "hub-status error";
+}
+
+function pickPronunciationPrompt() {
+  const phrase = pronunciationPrompts[Math.floor(Math.random() * pronunciationPrompts.length)];
+  pronunciationTarget.textContent = phrase;
+  pronunciationFeedback.textContent = "Press Start speaking and repeat the phrase.";
+  pronunciationFeedback.className = "hub-status";
+}
+
+function listenForPronunciation() {
+  if (!state.activeUser) {
+    pronunciationFeedback.textContent = "Log in to use pronunciation feedback.";
+    pronunciationFeedback.className = "hub-status error";
+    return;
+  }
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    pronunciationFeedback.textContent =
+      "Speech recognition is not supported in this browser. Try Chrome desktop.";
+    pronunciationFeedback.className = "hub-status error";
+    return;
+  }
+
+  const target = pronunciationTarget.textContent.trim().toLowerCase();
+  const recognition = new SpeechRecognition();
+  recognition.lang = "fr-FR";
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  pronunciationFeedback.textContent = "Listening...";
+  pronunciationFeedback.className = "hub-status";
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript.toLowerCase();
+    const targetWords = target.split(/\s+/);
+    const matchedWords = targetWords.filter((word) => transcript.includes(word)).length;
+    const score = Math.round((matchedWords / targetWords.length) * 100);
+    pronunciationFeedback.textContent = `Heard: "${transcript}". Match score: ${score}%.`;
+    pronunciationFeedback.className = score >= 60 ? "hub-status success" : "hub-status error";
+    if (score >= 60) {
+      addProgress();
+    }
+  };
+
+  recognition.onerror = () => {
+    pronunciationFeedback.textContent = "Could not hear that clearly. Try again slowly.";
+    pronunciationFeedback.className = "hub-status error";
+  };
+
+  recognition.start();
 }
 
 function updateProgress() {
@@ -739,6 +892,12 @@ saveNotesButton.addEventListener("click", () => {
   localStorage.setItem(getLearnerStorageKey("notes"), studyNotes.value);
   notesStatus.textContent = "Notes saved for your next review.";
 });
+
+generateSentenceButton.addEventListener("click", generateSentenceFromWord);
+generateQuizButton.addEventListener("click", generateMiniQuiz);
+generatedQuiz.addEventListener("change", checkGeneratedQuiz);
+newPronunciationButton.addEventListener("click", pickPronunciationPrompt);
+startPronunciationButton.addEventListener("click", listenForPronunciation);
 
 async function initializeApp() {
   renderLessons();

@@ -11,6 +11,7 @@ lightweight progress tracking, and demo account storage.
 - Browser speech synthesis for French pronunciation practice
 - Multiple-choice quiz with instant feedback
 - Logged-in learner hub with daily goals, topic practice, study notes, and a weekly plan
+- Word-to-sentence generator, MCQ quiz generator, and pronunciation feedback tools
 - Dedicated TEF, TCF, and DELF tests page with login-gated exam modules
 - Level selection before starting exam modules
 - Separate section pages for official-style listening, reading, writing, speaking, and language-structure tasks
