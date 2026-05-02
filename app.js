@@ -57,6 +57,40 @@ const quizQuestions = [
   },
 ];
 
+const topicPractice = [
+  {
+    title: "Travel",
+    description: "Ask for directions, book transport, and handle hotel check-ins.",
+    phrase: "Je voudrais reserver une chambre pour deux nuits.",
+    prompt: "Write one travel sentence you would use at a train station or hotel.",
+  },
+  {
+    title: "Work",
+    description: "Practice office conversations, meetings, and professional email phrases.",
+    phrase: "Pourriez-vous m'envoyer le document avant vendredi ?",
+    prompt: "Write one polite work request in French.",
+  },
+  {
+    title: "Daily life",
+    description: "Talk about routines, shopping, appointments, and weekend plans.",
+    phrase: "Je fais les courses apres le travail.",
+    prompt: "Write one sentence about your daily routine.",
+  },
+  {
+    title: "Grammar focus",
+    description: "Review sentence structure, connectors, and common verb patterns.",
+    phrase: "Si j'avais plus de temps, je pratiquerais tous les jours.",
+    prompt: "Write a sentence using parce que, donc, or cependant.",
+  },
+];
+
+const studyPlan = [
+  "Review 8 flashcards and say each word aloud.",
+  "Complete one guided lesson and mark it done.",
+  "Write three sentences about your day in French.",
+  "Practice one test section or topic prompt.",
+];
+
 const DB_NAME = "bonjourBuddyDb";
 const DB_VERSION = 1;
 const USER_STORE = "users";
@@ -99,6 +133,18 @@ const profileEmail = document.querySelector("#profile-email");
 const userCount = document.querySelector("#user-count");
 const logoutButton = document.querySelector("#logout-button");
 const syncAccountButton = document.querySelector("#sync-account-button");
+const hubLockCard = document.querySelector("#hub-lock-card");
+const hubContent = document.querySelector("#hub-content");
+const hubGreeting = document.querySelector("#hub-greeting");
+const topicButtons = document.querySelector("#topic-buttons");
+const topicPracticePanel = document.querySelector("#topic-practice");
+const completeTopicButton = document.querySelector("#complete-topic-button");
+const dailyGoalSelect = document.querySelector("#daily-goal-select");
+const dailyGoalMessage = document.querySelector("#daily-goal-message");
+const studyNotes = document.querySelector("#study-notes");
+const saveNotesButton = document.querySelector("#save-notes-button");
+const notesStatus = document.querySelector("#notes-status");
+const studyPlanList = document.querySelector("#study-plan-list");
 
 function normalizeEmail(email) {
   return email.trim().toLowerCase();
@@ -226,6 +272,107 @@ function renderLessons() {
       `
     )
     .join("");
+}
+
+function getLearnerStorageKey(key) {
+  const email = state.activeUser?.email || "guest";
+  return `bonjourBuddy:${email}:${key}`;
+}
+
+function renderTopicCards() {
+  topicButtons.innerHTML = topicPractice
+    .map(
+      (topic, index) => `
+        <button class="topic-button ${index === 0 ? "active" : ""}" type="button" data-topic="${index}">
+          ${topic.title}
+        </button>
+      `
+    )
+    .join("");
+  renderTopicPractice(0);
+}
+
+function renderTopicPractice(index) {
+  const topic = topicPractice[index];
+  topicButtons.querySelectorAll(".topic-button").forEach((button) => {
+    button.classList.toggle("active", Number(button.dataset.topic) === index);
+  });
+  topicPracticePanel.innerHTML = `
+    <p><strong>Useful phrase:</strong> ${topic.phrase}</p>
+    <p>${topic.description}</p>
+    <label for="topic-response">
+      ${topic.prompt}
+      <textarea id="topic-response" rows="4" placeholder="Write your answer in French here."></textarea>
+    </label>
+  `;
+}
+
+function renderStudyPlan() {
+  studyPlanList.innerHTML = studyPlan
+    .map(
+      (task, index) => `
+        <div>
+          <strong>Day ${index + 1}</strong>
+          <span>${task}</span>
+        </div>
+      `
+    )
+    .join("");
+}
+
+function renderLearnerDashboard() {
+  const locked = !state.activeUser;
+  hubLockCard.classList.toggle("hidden", !locked);
+  hubContent.classList.toggle("hidden", locked);
+
+  if (locked) {
+    return;
+  }
+
+  hubGreeting.textContent = `Bonjour, ${state.activeUser.name}`;
+  dailyGoalSelect.value = localStorage.getItem(getLearnerStorageKey("dailyGoal")) || "10";
+  dailyGoalMessage.textContent = `Today's goal: ${dailyGoalSelect.value} minutes of focused French.`;
+  studyNotes.value = localStorage.getItem(getLearnerStorageKey("notes")) || "";
+  renderTopicCards();
+  renderStudyPlan();
+}
+
+function completeTopicPractice() {
+  if (!state.activeUser) {
+    setAuthMessage("Log in to save topic practice.", "error");
+    return;
+  }
+
+  const response = document.querySelector("#topic-response");
+  if (!response || response.value.trim().length < 5) {
+    notesStatus.textContent = "Write a short topic answer before marking it complete.";
+    notesStatus.className = "hub-status error";
+    return;
+  }
+
+  addProgress();
+  notesStatus.textContent = "Topic practice saved to today's activity.";
+  notesStatus.className = "hub-status success";
+}
+
+function saveStudyNotes() {
+  if (!state.activeUser) {
+    setAuthMessage("Log in to save notes.", "error");
+    return;
+  }
+
+  localStorage.setItem(getLearnerStorageKey("notes"), studyNotes.value);
+  notesStatus.textContent = "Notes saved for review.";
+  notesStatus.className = "hub-status success";
+}
+
+function saveDailyGoal() {
+  if (!state.activeUser) {
+    return;
+  }
+
+  localStorage.setItem(getLearnerStorageKey("dailyGoal"), dailyGoalSelect.value);
+  dailyGoalMessage.textContent = `Today's goal: ${dailyGoalSelect.value} minutes of focused French.`;
 }
 
 function updateProgress() {
@@ -546,6 +693,48 @@ logoutButton.addEventListener("click", () => {
 });
 
 syncAccountButton.addEventListener("click", syncLocalAccount);
+
+topicButtons.addEventListener("click", (event) => {
+  const button = event.target.closest(".topic-button");
+  if (!button) {
+    return;
+  }
+
+  topicButtons
+    .querySelectorAll(".topic-button")
+    .forEach((topicButton) => topicButton.classList.remove("active"));
+  button.classList.add("active");
+  renderTopicPractice(Number(button.dataset.topic));
+});
+
+completeTopicButton.addEventListener("click", () => {
+  if (!state.activeUser) {
+    notesStatus.textContent = "Log in to save topic practice.";
+    return;
+  }
+
+  addProgress();
+  notesStatus.textContent = "Topic practice saved to today's activity.";
+});
+
+dailyGoalSelect.addEventListener("change", () => {
+  if (!state.activeUser) {
+    return;
+  }
+
+  localStorage.setItem(getLearnerStorageKey("dailyGoal"), dailyGoalSelect.value);
+  dailyGoalMessage.textContent = `Today's goal: ${dailyGoalSelect.value} minutes of focused French.`;
+});
+
+saveNotesButton.addEventListener("click", () => {
+  if (!state.activeUser) {
+    notesStatus.textContent = "Log in to save notes.";
+    return;
+  }
+
+  localStorage.setItem(getLearnerStorageKey("notes"), studyNotes.value);
+  notesStatus.textContent = "Notes saved for your next review.";
+});
 
 async function initializeApp() {
   renderLessons();

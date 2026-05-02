@@ -10,6 +10,7 @@ lightweight progress tracking, and demo account storage.
 - Flashcards for essential beginner vocabulary
 - Browser speech synthesis for French pronunciation practice
 - Multiple-choice quiz with instant feedback
+- Logged-in learner hub with daily goals, topic practice, study notes, and a weekly plan
 - Dedicated TEF, TCF, and DELF tests page with login-gated exam modules
 - Level selection before starting exam modules
 - Separate section pages for official-style listening, reading, writing, speaking, and language-structure tasks

@@ -870,6 +870,98 @@ textarea:disabled {
   padding-top: 24px;
 }
 
+.learner-hub-section {
+  padding-top: 24px;
+}
+
+.hub-lock-card,
+.hub-card {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow);
+}
+
+.hub-lock-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px;
+}
+
+.hub-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.hub-card {
+  padding: 26px;
+}
+
+.hub-card label {
+  display: grid;
+  gap: 10px;
+  color: var(--slate-700);
+  font-weight: 800;
+}
+
+.topic-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.topic-button {
+  border: 0;
+  border-radius: 999px;
+  background: var(--slate-100);
+  padding: 10px 14px;
+  color: var(--slate-700);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.topic-button.active {
+  background: var(--blue-900);
+  color: var(--white);
+}
+
+.topic-practice {
+  border-radius: 22px;
+  background: var(--slate-100);
+  padding: 18px;
+}
+
+.topic-practice strong {
+  color: var(--blue-900);
+}
+
+.hub-status {
+  min-height: 26px;
+  margin: 14px 0 0;
+  color: var(--green-600);
+  font-weight: 900;
+}
+
+.study-plan-list {
+  display: grid;
+  gap: 12px;
+}
+
+.study-plan-list div {
+  border-radius: 18px;
+  background: var(--slate-100);
+  padding: 12px 14px;
+}
+
+.study-plan-list strong {
+  display: block;
+  color: var(--blue-900);
+}
+
 .auth-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 0.75fr);

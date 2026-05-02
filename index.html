@@ -17,6 +17,7 @@
           <a href="#lessons">Lessons</a>
           <a href="#practice">Practice</a>
           <a href="#quiz">Quiz</a>
+          <a href="#learner-hub">My Hub</a>
           <a href="tests.html">Tests</a>
           <a href="#account">Account</a>
         </div>
@@ -110,6 +111,69 @@
           </div>
           <a class="button primary" href="tests.html">Open test practice</a>
         </article>
+      </section>
+
+      <section id="learner-hub" class="section learner-hub-section">
+        <div class="section-heading">
+          <p class="eyebrow">Logged-in learner hub</p>
+          <h2>Build your French routine beyond exams</h2>
+          <p>
+            Set a daily goal, practice real-life topics, save notes, and follow
+            a weekly study plan. Log in or sign up to unlock your hub.
+          </p>
+        </div>
+
+        <div id="hub-lock-card" class="hub-lock-card">
+          <div>
+            <span class="card-label">Account required</span>
+            <h3>Log in to unlock your learner hub</h3>
+            <p>Your personal goals, topic practice, and notes appear here after login.</p>
+          </div>
+          <a class="button primary" href="#account">Log in or sign up</a>
+        </div>
+
+        <div id="hub-content" class="hub-layout hidden">
+          <article class="hub-card">
+            <span class="card-label">Daily goal</span>
+            <h3 id="hub-greeting">Bonjour!</h3>
+            <p>Choose a daily target and keep your practice focused.</p>
+            <label for="daily-goal-select">
+              Daily practice target
+              <select id="daily-goal-select">
+                <option value="10">10 minutes</option>
+                <option value="15">15 minutes</option>
+                <option value="20">20 minutes</option>
+                <option value="30">30 minutes</option>
+              </select>
+            </label>
+            <p id="daily-goal-message" class="hub-status" role="status"></p>
+          </article>
+
+          <article class="hub-card topic-card">
+            <span class="card-label">Topic practice</span>
+            <h3>Pick a real-life topic</h3>
+            <div id="topic-buttons" class="topic-buttons" aria-label="Practice topics"></div>
+            <div id="topic-practice" class="topic-practice" aria-live="polite"></div>
+            <button id="complete-topic-button" class="button primary" type="button">Mark topic practiced</button>
+          </article>
+
+          <article class="hub-card">
+            <span class="card-label">My notes</span>
+            <h3>Save phrases to review</h3>
+            <label for="study-notes">
+              Personal notes
+              <textarea id="study-notes" rows="8" placeholder="Example: Je cherche un appartement pres du metro."></textarea>
+            </label>
+            <button id="save-notes-button" class="button secondary" type="button">Save notes</button>
+            <p id="notes-status" class="hub-status" role="status"></p>
+          </article>
+
+          <article class="hub-card study-plan-card">
+            <span class="card-label">Weekly plan</span>
+            <h3>This week's study mix</h3>
+            <div id="study-plan-list" class="study-plan-list"></div>
+          </article>
+        </div>
       </section>
 
       <section id="account" class="section account-section">
