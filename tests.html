@@ -27,11 +27,12 @@
           <p class="eyebrow">French exam preparation</p>
           <h1>Train smarter for TEF, TCF, and DELF.</h1>
           <p class="hero-copy">
-            Choose your target exam, practice by skill, compare your response with
-            model answers, and build confidence for real test tasks.
+            Sign in first, then choose your target exam, practice by skill,
+            compare your response with model answers, and build confidence for
+            real test tasks.
           </p>
           <div class="hero-actions">
-            <a class="button primary" href="#test-workspace">Start a drill</a>
+            <a class="button primary" href="#test-access">Sign in to start</a>
             <a class="button secondary" href="index.html">Back to learning app</a>
           </div>
         </div>
@@ -59,11 +60,62 @@
     </header>
 
     <main>
+      <section id="test-access" class="section test-access-section">
+        <article class="test-access-card" aria-labelledby="test-access-title">
+          <div>
+            <p class="eyebrow">Account required</p>
+            <h2 id="test-access-title">Sign in to unlock test modules</h2>
+            <p id="test-access-copy">
+              Test drills, model answers, and exam progress are available after
+              login so your practice can be saved to your learner profile.
+            </p>
+            <div id="test-session-panel" class="session-panel hidden">
+              <span class="status-pill">Signed in</span>
+              <strong id="test-session-name">Learner</strong>
+              <button id="test-logout-button" class="button secondary" type="button">Log out</button>
+            </div>
+          </div>
+
+          <div id="test-auth-panel" class="test-auth-panel">
+            <form id="test-login-form" class="auth-form active">
+              <h3>Log in</h3>
+              <label>
+                Email
+                <input name="email" type="email" autocomplete="email" required>
+              </label>
+              <label>
+                Password
+                <input name="password" type="password" autocomplete="current-password" required>
+              </label>
+              <button class="button primary" type="submit">Log in and practice</button>
+            </form>
+
+            <form id="test-signup-form" class="auth-form active">
+              <h3>Sign up</h3>
+              <label>
+                Name
+                <input name="name" type="text" autocomplete="name" minlength="2" required>
+              </label>
+              <label>
+                Email
+                <input name="email" type="email" autocomplete="email" required>
+              </label>
+              <label>
+                Password
+                <input name="password" type="password" autocomplete="new-password" minlength="6" required>
+              </label>
+              <button class="button secondary" type="submit">Create account</button>
+            </form>
+            <p id="test-auth-message" class="auth-message" role="status"></p>
+          </div>
+        </article>
+      </section>
+
       <section class="section test-path-section" aria-labelledby="test-path-title">
         <div class="section-heading">
           <p class="eyebrow">Choose your test</p>
           <h2 id="test-path-title">Pick an exam path</h2>
-          <p>Each path has targeted tasks based on common exam skill areas.</p>
+          <p>Each path has targeted tasks based on common exam skill areas. Login is required before starting.</p>
         </div>
 
         <div id="test-path-grid" class="test-path-grid" aria-live="polite"></div>
@@ -105,7 +157,7 @@
               <button id="show-model-answer" class="button primary" type="button">Check model answer</button>
               <button id="next-test-drill" class="button secondary" type="button">Next drill</button>
             </div>
-            <p id="test-feedback" class="model-answer" role="status"></p>
+            <p id="test-feedback" class="test-feedback" role="status"></p>
           </article>
         </div>
       </section>
@@ -124,7 +176,7 @@
           <article>
             <span>02</span>
             <h3>Answer before checking</h3>
-            <p>Type notes first, then compare with the model answer and strategy.</p>
+            <p>Log in, type notes first, then compare with the model answer and strategy.</p>
           </article>
           <article>
             <span>03</span>

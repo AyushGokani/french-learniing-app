@@ -494,10 +494,48 @@ legend {
   color: var(--red-600);
 }
 
+.test-access-card,
 .test-path-grid,
 .strategy-grid {
   display: grid;
   gap: 18px;
+}
+
+.test-access-card {
+  grid-template-columns: minmax(0, 0.85fr) minmax(320px, 1fr);
+  align-items: start;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 32px;
+  background: var(--white);
+  padding: 30px;
+  box-shadow: var(--shadow);
+}
+
+.test-auth-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.test-auth-panel .auth-form {
+  display: grid;
+  border-radius: 24px;
+  background: var(--slate-100);
+  padding: 20px;
+}
+
+.session-panel {
+  display: grid;
+  gap: 12px;
+  max-width: 320px;
+  border-radius: 24px;
+  background: var(--slate-100);
+  padding: 18px;
+}
+
+.session-panel strong {
+  color: var(--blue-900);
+  font-size: 1.15rem;
 }
 
 .test-path-grid {
@@ -522,6 +560,14 @@ legend {
 .test-path-card.active {
   border-color: rgba(29, 78, 216, 0.48);
   background: linear-gradient(180deg, #ffffff, #eff6ff);
+}
+
+.test-path-card button:disabled,
+.test-skill-list button:disabled,
+.exam-actions button:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
 }
 
 .test-path-card ul,
@@ -601,6 +647,30 @@ legend {
   grid-template-columns: minmax(260px, 0.42fr) minmax(0, 1fr);
   gap: 24px;
   align-items: start;
+}
+
+.test-auth-gate {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 24px;
+  border: 1px solid rgba(29, 78, 216, 0.18);
+  border-radius: 28px;
+  background: linear-gradient(135deg, #ffffff, #eff6ff);
+  padding: 22px;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+}
+
+.test-auth-gate.locked {
+  border-color: rgba(220, 38, 38, 0.18);
+  background: linear-gradient(135deg, #ffffff, #fff1f2);
+}
+
+.test-auth-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .test-sidebar,
