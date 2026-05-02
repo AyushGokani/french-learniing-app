@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bonjour Buddy | Learn French</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="hero">
+      <nav class="topbar" aria-label="Primary navigation">
+        <a class="brand" href="#home" aria-label="Bonjour Buddy home">
+          <span class="brand-mark">BB</span>
+          Bonjour Buddy
+        </a>
+        <div class="nav-links">
+          <a href="#lessons">Lessons</a>
+          <a href="#practice">Practice</a>
+          <a href="#quiz">Quiz</a>
+        </div>
+      </nav>
+
+      <section id="home" class="hero-content">
+        <div>
+          <p class="eyebrow">French made approachable</p>
+          <h1>Build daily confidence in French, one tiny lesson at a time.</h1>
+          <p class="hero-copy">
+            Learn essential phrases, practice vocabulary with flashcards, and test
+            yourself with quick quizzes designed for beginners.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#lessons">Start learning</a>
+            <a class="button secondary" href="#quiz">Take a quiz</a>
+          </div>
+        </div>
+
+        <aside class="progress-card" aria-labelledby="progress-title">
+          <span class="card-label">Today's progress</span>
+          <h2 id="progress-title"><span id="completed-count">0</span> activities done</h2>
+          <div class="progress-track" aria-hidden="true">
+            <div id="progress-bar" class="progress-fill"></div>
+          </div>
+          <p id="progress-message">Complete lessons and quizzes to build your streak.</p>
+        </aside>
+      </section>
+    </header>
+
+    <main>
+      <section id="lessons" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Guided lessons</p>
+          <h2>Start with everyday French</h2>
+          <p>Short lessons introduce the phrases you will use most often.</p>
+        </div>
+        <div id="lesson-grid" class="lesson-grid" aria-live="polite"></div>
+      </section>
+
+      <section id="practice" class="section split-section">
+        <div class="section-heading">
+          <p class="eyebrow">Flashcard practice</p>
+          <h2>Remember vocabulary faster</h2>
+          <p>Flip through useful words and say them aloud when your browser supports speech.</p>
+        </div>
+
+        <div class="flashcard" aria-live="polite">
+          <span id="card-category" class="card-label">Vocabulary</span>
+          <p id="french-word" class="french-word">Bonjour</p>
+          <p id="english-word" class="english-word">Hello</p>
+          <div class="flashcard-actions">
+            <button id="speak-button" class="button secondary" type="button">Hear it</button>
+            <button id="next-card-button" class="button primary" type="button">Next card</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="quiz" class="section quiz-section">
+        <div class="section-heading">
+          <p class="eyebrow">Quick quiz</p>
+          <h2>Check what you know</h2>
+          <p>Choose the best English translation for each French phrase.</p>
+        </div>
+
+        <form id="quiz-form" class="quiz-card">
+          <fieldset>
+            <legend id="quiz-question">Loading question...</legend>
+            <div id="quiz-options" class="quiz-options"></div>
+          </fieldset>
+          <div class="quiz-footer">
+            <button class="button primary" type="submit">Check answer</button>
+            <button id="next-question-button" class="button secondary" type="button">Next question</button>
+          </div>
+          <p id="quiz-feedback" class="quiz-feedback" role="status"></p>
+        </form>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Practice a little every day. Bon courage!</p>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
