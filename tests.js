@@ -15,6 +15,13 @@ const examPractice = {
         strategy: "Listen for time expressions, destination names, and delay words like retard.",
       },
       {
+        skill: "Reading",
+        prompt: "A TEF notice says: \"Les inscriptions ferment vendredi a midi.\" What is the deadline?",
+        task: "Identify the action and the exact time limit in one sentence.",
+        answer: "Registrations close on Friday at noon.",
+        strategy: "For TEF reading, scan first for dates, times, verbs of action, and deadlines.",
+      },
+      {
         skill: "Writing",
         prompt: "Should people learn French before moving to Canada?",
         task: "Write 3-4 sentences with an opinion, reason, example, and conclusion.",
