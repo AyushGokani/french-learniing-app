@@ -744,32 +744,32 @@ function showLoginRequiredMessage() {
   document.querySelector("#test-access").scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
-examGrid.addEventListener("click", (event) => {
-  const button = event.target.closest(".test-select");
-  if (!button) {
-    return;
-  }
-
-  selectExam(button.dataset.exam);
-});
-
-skillButtons.addEventListener("click", (event) => {
-  const button = event.target.closest(".skill-button");
-  if (!button) {
-    return;
-  }
-
-  if (!state.isLoggedIn) {
-    showLoginRequiredMessage();
-    return;
-  }
-
-  state.currentModuleIndex = Number(button.dataset.module);
-  state.currentTaskIndex = 0;
-  renderDrill();
-});
-
 if (examGrid) {
+  examGrid.addEventListener("click", (event) => {
+    const button = event.target.closest(".test-select");
+    if (!button) {
+      return;
+    }
+
+    selectExam(button.dataset.exam);
+  });
+
+  skillButtons.addEventListener("click", (event) => {
+    const button = event.target.closest(".skill-button");
+    if (!button) {
+      return;
+    }
+
+    if (!state.isLoggedIn) {
+      showLoginRequiredMessage();
+      return;
+    }
+
+    state.currentModuleIndex = Number(button.dataset.module);
+    state.currentTaskIndex = 0;
+    renderDrill();
+  });
+
   checkButton.addEventListener("click", completeDrill);
   nextButton.addEventListener("click", showNextDrill);
   levelSelect.addEventListener("change", () => {
