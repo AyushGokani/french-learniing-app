@@ -1,7 +1,8 @@
 # Bonjour Buddy
 
 A beginner-friendly French learning web app with guided lessons, vocabulary
-flashcards, quick quizzes, speech practice, and lightweight progress tracking.
+flashcards, quick quizzes, speech practice, lightweight progress tracking, and
+demo account storage.
 
 ## Features
 
@@ -10,7 +11,18 @@ flashcards, quick quizzes, speech practice, and lightweight progress tracking.
 - Browser speech synthesis for French pronunciation practice
 - Multiple-choice quiz with instant feedback
 - Local progress tracking toward a daily activity goal
+- Login and sign-up forms for learner profiles
+- Browser database storage with IndexedDB for users and per-user progress
 - Responsive layout for desktop and mobile screens
+
+## Account storage
+
+The deployed static app stores user accounts in IndexedDB, the browser's
+built-in database. Accounts are saved on the device/browser where they are
+created, with salted SHA-256 password hashes rather than plain-text passwords.
+
+For shared accounts across devices, add a server-backed database and API such as
+Supabase, Firebase, Neon, or Vercel Postgres.
 
 ## Run locally
 
@@ -30,5 +42,5 @@ Then visit `http://localhost:8000`.
 ```text
 index.html   # App markup and sections
 styles.css   # Responsive visual design
-app.js       # Lessons, flashcards, quiz behavior, and progress
+app.js       # Lessons, flashcards, quiz behavior, auth, and progress
 ```

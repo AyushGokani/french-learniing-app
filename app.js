@@ -57,8 +57,16 @@ const quizQuestions = [
   },
 ];
 
+const DB_NAME = "bonjourBuddyDb";
+const DB_VERSION = 1;
+const USER_STORE = "users";
+const SESSION_KEY = "bonjourBuddySession";
+const GUEST_PROGRESS_KEY = "completedActivities";
+let db;
+
 const state = {
-  completedActivities: Number(localStorage.getItem("completedActivities")) || 0,
+  activeUser: null,
+  completedActivities: Number(localStorage.getItem(GUEST_PROGRESS_KEY)) || 0,
   currentCardIndex: 0,
   currentQuestionIndex: 0,
   currentQuestionAnswered: false,
@@ -78,6 +86,110 @@ const quizQuestion = document.querySelector("#quiz-question");
 const quizOptions = document.querySelector("#quiz-options");
 const quizFeedback = document.querySelector("#quiz-feedback");
 const nextQuestionButton = document.querySelector("#next-question-button");
+const accountCta = document.querySelector("#account-cta");
+const sessionBadge = document.querySelector("#session-badge");
+const showLoginButton = document.querySelector("#show-login");
+const showSignupButton = document.querySelector("#show-signup");
+const loginForm = document.querySelector("#login-form");
+const signupForm = document.querySelector("#signup-form");
+const authMessage = document.querySelector("#auth-message");
+const profileTitle = document.querySelector("#profile-title");
+const profileCopy = document.querySelector("#profile-copy");
+const profileEmail = document.querySelector("#profile-email");
+const userCount = document.querySelector("#user-count");
+const logoutButton = document.querySelector("#logout-button");
+
+function normalizeEmail(email) {
+  return email.trim().toLowerCase();
+}
+
+function openDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+    request.onupgradeneeded = () => {
+      const database = request.result;
+
+      if (!database.objectStoreNames.contains(USER_STORE)) {
+        const userStore = database.createObjectStore(USER_STORE, { keyPath: "email" });
+        userStore.createIndex("createdAt", "createdAt");
+      }
+    };
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function requestToPromise(request) {
+  return new Promise((resolve, reject) => {
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function getUser(email) {
+  const transaction = db.transaction(USER_STORE, "readonly");
+  const store = transaction.objectStore(USER_STORE);
+
+  return requestToPromise(store.get(normalizeEmail(email)));
+}
+
+function saveUser(user) {
+  const transaction = db.transaction(USER_STORE, "readwrite");
+  const store = transaction.objectStore(USER_STORE);
+
+  return requestToPromise(store.put(user));
+}
+
+function countUsers() {
+  const transaction = db.transaction(USER_STORE, "readonly");
+  const store = transaction.objectStore(USER_STORE);
+
+  return requestToPromise(store.count());
+}
+
+async function hashPassword(password, salt) {
+  const data = new TextEncoder().encode(`${salt}:${password}`);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+
+  return Array.from(new Uint8Array(digest))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function createSalt() {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+
+  return Array.from(bytes)
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function setAuthMessage(message, type = "") {
+  authMessage.textContent = message;
+  authMessage.className = type ? `auth-message ${type}` : "auth-message";
+}
+
+function saveSession(email) {
+  localStorage.setItem(SESSION_KEY, email);
+}
+
+function clearSession() {
+  localStorage.removeItem(SESSION_KEY);
+}
+
+async function persistActiveUserProgress() {
+  if (!state.activeUser) {
+    localStorage.setItem(GUEST_PROGRESS_KEY, String(state.completedActivities));
+    return;
+  }
+
+  state.activeUser.completedActivities = state.completedActivities;
+  state.activeUser.updatedAt = new Date().toISOString();
+  await saveUser(state.activeUser);
+}
 
 function renderLessons() {
   lessonGrid.innerHTML = lessons
@@ -112,12 +224,144 @@ function updateProgress() {
     state.completedActivities >= 10
       ? "Excellent work. You reached today's practice goal!"
       : `${10 - cappedCount} more activities to reach today's goal.`;
-  localStorage.setItem("completedActivities", String(state.completedActivities));
 }
 
 function addProgress() {
   state.completedActivities += 1;
   updateProgress();
+  persistActiveUserProgress().catch(() => {
+    setAuthMessage("Progress could not be saved right now.", "error");
+  });
+}
+
+function switchAuthPanel(panel) {
+  const isLogin = panel === "login";
+  showLoginButton.classList.toggle("active", isLogin);
+  showSignupButton.classList.toggle("active", !isLogin);
+  showLoginButton.setAttribute("aria-selected", String(isLogin));
+  showSignupButton.setAttribute("aria-selected", String(!isLogin));
+  loginForm.classList.toggle("active", isLogin);
+  signupForm.classList.toggle("active", !isLogin);
+  setAuthMessage("");
+}
+
+async function renderProfile() {
+  const storedUsers = await countUsers();
+  userCount.textContent = String(storedUsers);
+
+  if (!state.activeUser) {
+    sessionBadge.textContent = "Guest mode";
+    accountCta.textContent = "Create account";
+    profileTitle.textContent = "No one is logged in yet";
+    profileCopy.textContent =
+      "Create an account to save your profile and track progress separately from guest practice.";
+    profileEmail.textContent = "Guest";
+    logoutButton.classList.add("hidden");
+    return;
+  }
+
+  sessionBadge.textContent = `Logged in as ${state.activeUser.name}`;
+  accountCta.textContent = "View account";
+  profileTitle.textContent = `Bonjour, ${state.activeUser.name}`;
+  profileCopy.textContent =
+    "Your learner profile and activity progress are saved in this browser database.";
+  profileEmail.textContent = state.activeUser.email;
+  logoutButton.classList.remove("hidden");
+}
+
+async function setActiveUser(user) {
+  state.activeUser = user;
+  state.completedActivities = Number(user.completedActivities) || 0;
+  saveSession(user.email);
+  updateProgress();
+  await renderProfile();
+}
+
+async function restoreSession() {
+  const sessionEmail = localStorage.getItem(SESSION_KEY);
+
+  if (!sessionEmail) {
+    await renderProfile();
+    return;
+  }
+
+  const user = await getUser(sessionEmail);
+  if (!user) {
+    clearSession();
+    await renderProfile();
+    return;
+  }
+
+  await setActiveUser(user);
+}
+
+async function handleSignup(event) {
+  event.preventDefault();
+  const formData = new FormData(signupForm);
+  const name = formData.get("name").trim();
+  const email = normalizeEmail(formData.get("email"));
+  const password = formData.get("password");
+
+  if (!name || !email || password.length < 6) {
+    setAuthMessage("Please enter a name, email, and password of at least 6 characters.", "error");
+    return;
+  }
+
+  const existingUser = await getUser(email);
+  if (existingUser) {
+    setAuthMessage("An account with this email already exists. Try logging in.", "error");
+    switchAuthPanel("login");
+    return;
+  }
+
+  const salt = createSalt();
+  const user = {
+    name,
+    email,
+    salt,
+    passwordHash: await hashPassword(password, salt),
+    completedActivities: state.completedActivities,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  await saveUser(user);
+  signupForm.reset();
+  await setActiveUser(user);
+  setAuthMessage("Account created and logged in. Bienvenue!", "success");
+}
+
+async function handleLogin(event) {
+  event.preventDefault();
+  const formData = new FormData(loginForm);
+  const email = normalizeEmail(formData.get("email"));
+  const password = formData.get("password");
+  const user = await getUser(email);
+
+  if (!user) {
+    setAuthMessage("No account found for that email.", "error");
+    return;
+  }
+
+  const passwordHash = await hashPassword(password, user.salt);
+  if (passwordHash !== user.passwordHash) {
+    setAuthMessage("That password does not match.", "error");
+    return;
+  }
+
+  loginForm.reset();
+  await setActiveUser(user);
+  setAuthMessage("Logged in successfully. Bon retour!", "success");
+}
+
+async function handleLogout() {
+  await persistActiveUserProgress();
+  state.activeUser = null;
+  state.completedActivities = Number(localStorage.getItem(GUEST_PROGRESS_KEY)) || 0;
+  clearSession();
+  updateProgress();
+  await renderProfile();
+  setAuthMessage("Logged out. You are back in guest mode.", "success");
 }
 
 function renderFlashcard() {
@@ -199,7 +443,45 @@ nextQuestionButton.addEventListener("click", () => {
   renderQuizQuestion();
 });
 
-renderLessons();
-renderFlashcard();
-renderQuizQuestion();
-updateProgress();
+showLoginButton.addEventListener("click", () => switchAuthPanel("login"));
+
+showSignupButton.addEventListener("click", () => switchAuthPanel("signup"));
+
+signupForm.addEventListener("submit", (event) => {
+  handleSignup(event).catch(() => {
+    setAuthMessage("Account creation failed. Please try again.", "error");
+  });
+});
+
+loginForm.addEventListener("submit", (event) => {
+  handleLogin(event).catch(() => {
+    setAuthMessage("Login failed. Please try again.", "error");
+  });
+});
+
+logoutButton.addEventListener("click", () => {
+  handleLogout().catch(() => {
+    setAuthMessage("Logout failed. Please try again.", "error");
+  });
+});
+
+async function initializeApp() {
+  renderLessons();
+  renderFlashcard();
+  renderQuizQuestion();
+  updateProgress();
+
+  if (!("indexedDB" in window) || !("crypto" in window) || !crypto.subtle) {
+    setAuthMessage("Accounts need a browser with IndexedDB and secure crypto support.", "error");
+    return;
+  }
+
+  try {
+    db = await openDatabase();
+    await restoreSession();
+  } catch (error) {
+    setAuthMessage("The browser database could not be opened.", "error");
+  }
+}
+
+initializeApp();

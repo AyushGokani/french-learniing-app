@@ -17,6 +17,7 @@
           <a href="#lessons">Lessons</a>
           <a href="#practice">Practice</a>
           <a href="#quiz">Quiz</a>
+          <a href="#account">Account</a>
         </div>
       </nav>
 
@@ -30,11 +31,13 @@
           </p>
           <div class="hero-actions">
             <a class="button primary" href="#lessons">Start learning</a>
+            <a id="account-cta" class="button secondary" href="#account">Create account</a>
             <a class="button secondary" href="#quiz">Take a quiz</a>
           </div>
         </div>
 
         <aside class="progress-card" aria-labelledby="progress-title">
+          <span id="session-badge" class="status-pill">Guest mode</span>
           <span class="card-label">Today's progress</span>
           <h2 id="progress-title"><span id="completed-count">0</span> activities done</h2>
           <div class="progress-track" aria-hidden="true">
@@ -91,6 +94,80 @@
           </div>
           <p id="quiz-feedback" class="quiz-feedback" role="status"></p>
         </form>
+      </section>
+
+      <section id="account" class="section account-section">
+        <div class="section-heading">
+          <p class="eyebrow">Your account</p>
+          <h2>Save learners in a browser database</h2>
+          <p>
+            Sign up or log in to keep a learner profile on this device. This static
+            version stores users in IndexedDB, the browser's built-in database.
+          </p>
+        </div>
+
+        <div class="auth-layout">
+          <article class="auth-card">
+            <div class="auth-tabs" role="tablist" aria-label="Account forms">
+              <button id="show-login" class="auth-tab active" type="button" role="tab" aria-controls="login-panel" aria-selected="true">
+                Log in
+              </button>
+              <button id="show-signup" class="auth-tab" type="button" role="tab" aria-controls="signup-panel" aria-selected="false">
+                Sign up
+              </button>
+            </div>
+
+            <form id="login-form" class="auth-form active" aria-labelledby="show-login">
+              <label>
+                Email
+                <input id="login-email" name="email" type="email" autocomplete="email" required>
+              </label>
+              <label>
+                Password
+                <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+              </label>
+              <button class="button primary" type="submit">Log in</button>
+            </form>
+
+            <form id="signup-form" class="auth-form" aria-labelledby="show-signup">
+              <label>
+                Name
+                <input id="signup-name" name="name" type="text" autocomplete="name" minlength="2" required>
+              </label>
+              <label>
+                Email
+                <input id="signup-email" name="email" type="email" autocomplete="email" required>
+              </label>
+              <label>
+                Password
+                <input id="signup-password" name="password" type="password" autocomplete="new-password" minlength="6" required>
+              </label>
+              <button class="button primary" type="submit">Create account</button>
+            </form>
+
+            <p id="auth-message" class="auth-message" role="status"></p>
+          </article>
+
+          <aside class="profile-card" aria-labelledby="profile-title">
+            <span class="card-label">Learner profile</span>
+            <h3 id="profile-title">No one is logged in yet</h3>
+            <p id="profile-copy">
+              Create an account to save your profile and track progress separately
+              from guest practice.
+            </p>
+            <dl class="profile-details">
+              <div>
+                <dt>Email</dt>
+                <dd id="profile-email">Guest</dd>
+              </div>
+              <div>
+                <dt>Stored users</dt>
+                <dd id="user-count">0</dd>
+              </div>
+            </dl>
+            <button id="logout-button" class="button secondary hidden" type="button">Log out</button>
+          </aside>
+        </div>
       </section>
     </main>
 

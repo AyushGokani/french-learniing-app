@@ -42,6 +42,21 @@ input {
   font: inherit;
 }
 
+input {
+  width: 100%;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  border-radius: 16px;
+  background: var(--white);
+  padding: 12px 14px;
+  color: var(--slate-900);
+}
+
+input:focus {
+  border-color: rgba(29, 78, 216, 0.55);
+  box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.12);
+  outline: none;
+}
+
 .hero {
   min-height: 660px;
   overflow: hidden;
@@ -159,7 +174,8 @@ h3 {
 
 .hero-actions,
 .flashcard-actions,
-.quiz-footer {
+.quiz-footer,
+.auth-tabs {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
@@ -203,7 +219,9 @@ h3 {
 .progress-card,
 .flashcard,
 .quiz-card,
-.lesson-card {
+.lesson-card,
+.auth-card,
+.profile-card {
   border: 1px solid rgba(15, 23, 42, 0.08);
   border-radius: 32px;
   background: rgba(255, 255, 255, 0.88);
@@ -220,6 +238,18 @@ h3 {
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.status-pill {
+  display: inline-flex;
+  width: fit-content;
+  margin-bottom: 14px;
+  border-radius: 999px;
+  background: var(--blue-100);
+  padding: 6px 12px;
+  color: var(--blue-900);
+  font-size: 0.78rem;
+  font-weight: 900;
 }
 
 .progress-track {
@@ -373,6 +403,102 @@ legend {
   color: var(--red-600);
 }
 
+.account-section {
+  padding-top: 24px;
+}
+
+.auth-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.75fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.auth-card,
+.profile-card {
+  padding: 28px;
+}
+
+.auth-tabs {
+  margin-bottom: 24px;
+}
+
+.auth-tab {
+  border: 0;
+  border-radius: 999px;
+  background: var(--slate-100);
+  padding: 10px 16px;
+  color: var(--slate-700);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.auth-tab.active {
+  background: var(--blue-900);
+  color: var(--white);
+}
+
+.auth-form {
+  display: none;
+  gap: 16px;
+}
+
+.auth-form.active {
+  display: grid;
+}
+
+.auth-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--slate-700);
+  font-weight: 800;
+}
+
+.auth-message {
+  min-height: 28px;
+  margin: 18px 0 0;
+  font-weight: 800;
+}
+
+.auth-message.success {
+  color: var(--green-600);
+}
+
+.auth-message.error {
+  color: var(--red-600);
+}
+
+.profile-details {
+  display: grid;
+  gap: 12px;
+  margin: 22px 0;
+}
+
+.profile-details div {
+  border-radius: 18px;
+  background: var(--slate-100);
+  padding: 12px 14px;
+}
+
+.profile-details dt {
+  color: var(--slate-500);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.profile-details dd {
+  margin: 4px 0 0;
+  color: var(--slate-900);
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.hidden {
+  display: none;
+}
+
 .footer {
   padding: 32px 24px 48px;
   color: var(--slate-500);
@@ -389,7 +515,8 @@ legend {
 
   .topbar,
   .hero-content,
-  .split-section {
+  .split-section,
+  .auth-layout {
     grid-template-columns: 1fr;
   }
 
@@ -430,7 +557,9 @@ legend {
   .progress-card,
   .flashcard,
   .quiz-card,
-  .lesson-card {
+  .lesson-card,
+  .auth-card,
+  .profile-card {
     border-radius: 24px;
   }
 }
