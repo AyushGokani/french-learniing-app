@@ -56,3 +56,48 @@ const serverApi = {
     });
   },
 };
+
+function toUnavailableResult(error) {
+  return {
+    error: error.message,
+    isUnavailable: error.status === 503 || error.name === "TypeError",
+  };
+}
+
+async function safeRequest(callback) {
+  try {
+    return await callback();
+  } catch (error) {
+    return toUnavailableResult(error);
+  }
+}
+
+window.BonjourApi = {
+  signup(credentials) {
+    return safeRequest(() => serverApi.signup(credentials));
+  },
+
+  login(credentials) {
+    return safeRequest(() => serverApi.login(credentials));
+  },
+
+  logout() {
+    return safeRequest(() => serverApi.logout());
+  },
+
+  getCurrentUser() {
+    return safeRequest(() => serverApi.me());
+  },
+
+  saveProgress(progress) {
+    return safeRequest(() => serverApi.saveProgress(progress));
+  },
+
+  saveTestAttempt(attempt) {
+    return safeRequest(() => serverApi.saveTestAttempt(attempt));
+  },
+
+  isServerUser(user) {
+    return Boolean(user?.id);
+  },
+};

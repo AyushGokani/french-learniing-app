@@ -98,6 +98,7 @@ const profileCopy = document.querySelector("#profile-copy");
 const profileEmail = document.querySelector("#profile-email");
 const userCount = document.querySelector("#user-count");
 const logoutButton = document.querySelector("#logout-button");
+const syncAccountButton = document.querySelector("#sync-account-button");
 
 function normalizeEmail(email) {
   return email.trim().toLowerCase();
@@ -170,6 +171,10 @@ function createSalt() {
 function setAuthMessage(message, type = "") {
   authMessage.textContent = message;
   authMessage.className = type ? `auth-message ${type}` : "auth-message";
+}
+
+function hasServerApi() {
+  return Boolean(window.BonjourApi);
 }
 
 function saveSession(email) {
@@ -267,18 +272,21 @@ async function renderProfile() {
       "Create an account to save your profile and track progress separately from guest practice.";
     profileEmail.textContent = "Guest";
     logoutButton.classList.add("hidden");
+    syncAccountButton.classList.add("hidden");
     return;
   }
 
+  const isServerUser = window.BonjourApi?.isServerUser(state.activeUser);
   sessionBadge.textContent = `Logged in as ${state.activeUser.name}`;
   accountCta.textContent = "View account";
   profileTitle.textContent = `Bonjour, ${state.activeUser.name}`;
   profileCopy.textContent =
-    window.BonjourApi?.isServerUser(state.activeUser)
+    isServerUser
       ? "Your learner profile and activity progress are saved in the central database."
       : "Your learner profile and activity progress are saved in this browser database.";
   profileEmail.textContent = state.activeUser.email;
   logoutButton.classList.remove("hidden");
+  syncAccountButton.classList.toggle("hidden", isServerUser || !hasServerApi());
 }
 
 async function setActiveUser(user) {
@@ -422,6 +430,20 @@ async function handleLogout() {
   setAuthMessage("Logged out. You are back in guest mode.", "success");
 }
 
+async function syncLocalAccount() {
+  if (!state.activeUser || window.BonjourApi?.isServerUser(state.activeUser)) {
+    return;
+  }
+
+  setAuthMessage(
+    "This local account needs your password to sync. Use Sign up with the same email and password to create it in the central database.",
+    "error"
+  );
+  switchAuthPanel("signup");
+  signupForm.elements.name.value = state.activeUser.name;
+  signupForm.elements.email.value = state.activeUser.email;
+}
+
 function renderFlashcard() {
   const card = vocabulary[state.currentCardIndex];
   cardCategory.textContent = card.category;
@@ -522,6 +544,8 @@ logoutButton.addEventListener("click", () => {
     setAuthMessage("Logout failed. Please try again.", "error");
   });
 });
+
+syncAccountButton.addEventListener("click", syncLocalAccount);
 
 async function initializeApp() {
   renderLessons();
