@@ -10,8 +10,8 @@ lightweight progress tracking, and demo account storage.
 - Flashcards for essential beginner vocabulary
 - Browser speech synthesis for French pronunciation practice
 - Multiple-choice quiz with instant feedback
-- Dedicated TEF, TCF, and DELF tests page with login-gated skill drills
-- Writing, speaking, reading, listening, and language-structure practice prompts
+- Dedicated TEF, TCF, and DELF tests page with login-gated exam modules
+- Section-by-section practice for official-style listening, reading, writing, speaking, and language-structure tasks
 - Local progress tracking toward a daily activity goal
 - Login and sign-up forms for learner profiles
 - Browser database storage with IndexedDB for users and per-user progress

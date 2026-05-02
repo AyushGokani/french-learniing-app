@@ -623,18 +623,31 @@ textarea:disabled {
 }
 
 .test-skill-list button {
+  display: grid;
+  gap: 4px;
+  text-align: left;
   border: 0;
-  border-radius: 999px;
+  border-radius: 18px;
   background: var(--slate-100);
-  padding: 10px 14px;
+  padding: 12px 14px;
   color: var(--slate-700);
   cursor: pointer;
   font-weight: 900;
 }
 
+.test-skill-list button span {
+  color: var(--slate-500);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
 .test-skill-list button.active {
   background: var(--blue-900);
   color: var(--white);
+}
+
+.test-skill-list button.active span {
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .test-workspace {
