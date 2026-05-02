@@ -1,3 +1,4 @@
+(() => {
 const examPractice = window.BONJOUR_EXAM_PRACTICE || {};
 const SESSION_KEY = "bonjourBuddySession";
 
@@ -249,3 +250,4 @@ getParams();
 restoreSession()
   .catch(() => {})
   .finally(renderSection);
+})();
