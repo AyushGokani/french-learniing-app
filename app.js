@@ -444,6 +444,7 @@ async function setActiveUser(user) {
   }
   updateProgress();
   await renderProfile();
+  renderLearnerDashboard();
 }
 
 async function restoreSession() {
@@ -459,6 +460,7 @@ async function restoreSession() {
 
   if (!sessionEmail) {
     await renderProfile();
+    renderLearnerDashboard();
     return;
   }
 
@@ -466,6 +468,7 @@ async function restoreSession() {
   if (!user) {
     clearSession();
     await renderProfile();
+    renderLearnerDashboard();
     return;
   }
 
@@ -574,6 +577,7 @@ async function handleLogout() {
   clearSession();
   updateProgress();
   await renderProfile();
+  renderLearnerDashboard();
   setAuthMessage("Logged out. You are back in guest mode.", "success");
 }
 
@@ -741,6 +745,7 @@ async function initializeApp() {
   renderFlashcard();
   renderQuizQuestion();
   updateProgress();
+  renderLearnerDashboard();
 
   if (!("indexedDB" in window) || !("crypto" in window) || !crypto.subtle) {
     setAuthMessage("Accounts need a browser with IndexedDB and secure crypto support.", "error");
