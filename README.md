@@ -10,7 +10,7 @@ lightweight progress tracking, and demo account storage.
 - Flashcards for essential beginner vocabulary
 - Browser speech synthesis for French pronunciation practice
 - Multiple-choice quiz with instant feedback
-- TEF, TCF, and DELF exam prep cards with targeted skill drills
+- Dedicated TEF, TCF, and DELF tests page with targeted skill drills
 - Writing, speaking, reading, listening, and language-structure practice prompts
 - Local progress tracking toward a daily activity goal
 - Login and sign-up forms for learner profiles
@@ -42,7 +42,9 @@ Then visit `http://localhost:8000`.
 ## Project structure
 
 ```text
-index.html   # App markup and sections
+index.html   # Main app markup and account sections
+tests.html   # Dedicated TEF, TCF, and DELF test prep page
 styles.css   # Responsive visual design
 app.js       # Lessons, flashcards, quiz behavior, auth, and progress
+tests.js     # Test-page data, drill rendering, and interactions
 ```

@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Exam Practice | Bonjour Buddy</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="tests-page">
+    <header class="tests-hero">
+      <nav class="topbar" aria-label="Primary navigation">
+        <a class="brand" href="index.html" aria-label="Bonjour Buddy home">
+          <span class="brand-mark">BB</span>
+          Bonjour Buddy
+        </a>
+        <div class="nav-links">
+          <a href="index.html#lessons">Lessons</a>
+          <a href="index.html#practice">Practice</a>
+          <a href="index.html#quiz">Quiz</a>
+          <a href="tests.html" aria-current="page">Tests</a>
+          <a href="index.html#account">Account</a>
+        </div>
+      </nav>
+
+      <section class="tests-hero-content">
+        <div>
+          <p class="eyebrow">French exam preparation</p>
+          <h1>Train smarter for TEF, TCF, and DELF.</h1>
+          <p class="hero-copy">
+            Choose your target exam, practice by skill, compare your response with
+            model answers, and build confidence for real test tasks.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#test-workspace">Start a drill</a>
+            <a class="button secondary" href="index.html">Back to learning app</a>
+          </div>
+        </div>
+
+        <aside class="tests-score-card" aria-labelledby="tests-score-title">
+          <span class="card-label">Exam readiness</span>
+          <h2 id="tests-score-title"><span id="completed-test-count">0</span> drills complete</h2>
+          <p>Practice across comprehension, production, vocabulary, and structure.</p>
+          <div class="test-stat-grid" aria-label="Exam prep stats">
+            <div>
+              <strong>3</strong>
+              <span>Exams</span>
+            </div>
+            <div>
+              <strong>10</strong>
+              <span>Drills</span>
+            </div>
+            <div>
+              <strong>4</strong>
+              <span>Skills</span>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </header>
+
+    <main>
+      <section class="section test-path-section" aria-labelledby="test-path-title">
+        <div class="section-heading">
+          <p class="eyebrow">Choose your test</p>
+          <h2 id="test-path-title">Pick an exam path</h2>
+          <p>Each path has targeted tasks based on common exam skill areas.</p>
+        </div>
+
+        <div id="test-path-grid" class="test-path-grid" aria-live="polite"></div>
+      </section>
+
+      <section id="test-workspace" class="section test-workspace">
+        <div class="test-workspace-shell">
+          <aside class="test-sidebar" aria-labelledby="active-test-title">
+            <span class="card-label">Active test</span>
+            <h2 id="active-test-title">TEF</h2>
+            <p id="active-test-description">Loading test overview...</p>
+            <div id="test-skill-list" class="test-skill-list" aria-label="Available skills"></div>
+          </aside>
+
+          <article class="test-drill-panel" aria-labelledby="test-drill-title">
+            <div class="test-drill-header">
+              <div>
+                <span id="test-drill-skill" class="status-pill">Listening</span>
+                <h2 id="test-drill-title">Practice prompt</h2>
+              </div>
+              <span id="test-drill-counter" class="test-counter">1 / 1</span>
+            </div>
+
+            <div class="prompt-card">
+              <p id="test-drill-prompt">Loading prompt...</p>
+              <p id="test-drill-task">Loading task...</p>
+            </div>
+
+            <label class="response-label" for="test-response">
+              Your answer, notes, or speaking outline
+              <textarea
+                id="test-response"
+                rows="8"
+                placeholder="Write your response here. For speaking, draft the points you would say aloud."
+              ></textarea>
+            </label>
+
+            <div class="exam-actions">
+              <button id="show-model-answer" class="button primary" type="button">Check model answer</button>
+              <button id="next-test-drill" class="button secondary" type="button">Next drill</button>
+            </div>
+            <p id="test-feedback" class="model-answer" role="status"></p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section strategy-section" aria-labelledby="strategy-title">
+        <div class="section-heading">
+          <p class="eyebrow">How to use this page</p>
+          <h2 id="strategy-title">Practice like a real exam candidate</h2>
+        </div>
+        <div class="strategy-grid">
+          <article>
+            <span>01</span>
+            <h3>Pick one exam</h3>
+            <p>Start with the test you actually need so the tasks match your goal.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Answer before checking</h3>
+            <p>Type notes first, then compare with the model answer and strategy.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Repeat by skill</h3>
+            <p>Rotate between listening, reading, writing, speaking, and structures.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Bonne preparation. Small drills add up.</p>
+    </footer>
+
+    <script src="tests.js"></script>
+  </body>
+</html>
